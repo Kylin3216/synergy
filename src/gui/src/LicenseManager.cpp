@@ -42,23 +42,23 @@ getMaintenanceMessage(const SerialKey& serialKey)
 void
 checkSerialKey(const SerialKey& serialKey, bool acceptExpired)
 {
-    if (serialKey.isMaintenance()) {
-        auto buildDate = QDateTime::fromString(__TIMESTAMP__).toTime_t();
-
-        if (buildDate > serialKey.getExpiration()) {
-            throw std::runtime_error(getMaintenanceMessage(serialKey));
-        }
-    }
-
-    if (!acceptExpired && serialKey.isExpired(::time(nullptr))) {
-        throw std::runtime_error("Serial key expired");
-    }
-
-    #ifdef SYNERGY_BUSINESS
-    if (!serialKey.isValid()) {
-        throw std::runtime_error("The serial key is not compatible with the business version of Synergy.");
-    }
-    #endif
+//    if (serialKey.isMaintenance()) {
+//        auto buildDate = QDateTime::fromString(__TIMESTAMP__).toTime_t();
+//
+//        if (buildDate > serialKey.getExpiration()) {
+//            throw std::runtime_error(getMaintenanceMessage(serialKey));
+//        }
+//    }
+//
+//    if (!acceptExpired && serialKey.isExpired(::time(nullptr))) {
+//        throw std::runtime_error("Serial key expired");
+//    }
+//
+//    #ifdef SYNERGY_BUSINESS
+//    if (!serialKey.isValid()) {
+//        throw std::runtime_error("The serial key is not compatible with the business version of Synergy.");
+//    }
+//    #endif
 }
 
 }
@@ -73,46 +73,46 @@ LicenseManager::LicenseManager(AppConfig* appConfig) :
 void
 LicenseManager::setSerialKey(SerialKey serialKey, bool acceptExpired)
 {
-    checkSerialKey(serialKey, acceptExpired);
-
-    if (serialKey != m_serialKey) {
-        using std::swap;
-        swap (serialKey, m_serialKey);
-        m_AppConfig->setSerialKey(QString::fromStdString
-                                  (m_serialKey.toString()));
-
-        emit showLicenseNotice(getLicenseNotice());
-        validateSerialKey();
-        m_registry.scheduleRegistration();
-
-        if (m_serialKey.edition() != serialKey.edition()) {
-            m_AppConfig->setEdition(m_serialKey.edition());
-            emit editionChanged(m_serialKey.edition());
-        }
-    }
+//    checkSerialKey(serialKey, acceptExpired);
+//
+//    if (serialKey != m_serialKey) {
+//        using std::swap;
+//        swap (serialKey, m_serialKey);
+//        m_AppConfig->setSerialKey(QString::fromStdString
+//                                  (m_serialKey.toString()));
+//
+//        emit showLicenseNotice(getLicenseNotice());
+//        validateSerialKey();
+//        m_registry.scheduleRegistration();
+//
+//        if (m_serialKey.edition() != serialKey.edition()) {
+//            m_AppConfig->setEdition(m_serialKey.edition());
+//            emit editionChanged(m_serialKey.edition());
+//        }
+//    }
 }
 
 void
 LicenseManager::notifyUpdate(QString fromVersion, QString toVersion) const {
-    if ((fromVersion == "Unknown")
-            && (m_serialKey == SerialKey(kUnregistered))) {
-        return;
-    }
-
-    ActivationNotifier* notifier = new ActivationNotifier();
-    notifier->setUpdateInfo (fromVersion, toVersion,
-                             QString::fromStdString(m_serialKey.toString()));
-
-    QThread* thread = new QThread();
-    connect(notifier, SIGNAL(finished()), thread, SLOT(quit()));
-    connect(notifier, SIGNAL(finished()), notifier, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-
-    notifier->moveToThread(thread);
-    thread->start();
-
-    QMetaObject::invokeMethod(notifier, "notifyUpdate",
-                              Qt::QueuedConnection);
+//    if ((fromVersion == "Unknown")
+//            && (m_serialKey == SerialKey(kUnregistered))) {
+//        return;
+//    }
+//
+//    ActivationNotifier* notifier = new ActivationNotifier();
+//    notifier->setUpdateInfo (fromVersion, toVersion,
+//                             QString::fromStdString(m_serialKey.toString()));
+//
+//    QThread* thread = new QThread();
+//    connect(notifier, SIGNAL(finished()), thread, SLOT(quit()));
+//    connect(notifier, SIGNAL(finished()), notifier, SLOT(deleteLater()));
+//    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+//
+//    notifier->moveToThread(thread);
+//    thread->start();
+//
+//    QMetaObject::invokeMethod(notifier, "notifyUpdate",
+//                              Qt::QueuedConnection);
 }
 
 Edition
@@ -136,24 +136,24 @@ LicenseManager::serialKey() const
 void
 LicenseManager::refresh()
 {
-    if (!m_AppConfig->serialKey().isEmpty()) {
-        try {
-            SerialKey serialKey (m_AppConfig->serialKey().toStdString());
-            setSerialKey(serialKey, true);
-        } catch (...) {
-            m_serialKey = SerialKey();
-            m_AppConfig->clearSerialKey();
-        }
-    }
-    if (!m_serialKey.isValid()) {
-        emit InvalidLicense();
-    }
+//    if (!m_AppConfig->serialKey().isEmpty()) {
+//        try {
+//            SerialKey serialKey (m_AppConfig->serialKey().toStdString());
+//            setSerialKey(serialKey, true);
+//        } catch (...) {
+//            m_serialKey = SerialKey();
+//            m_AppConfig->clearSerialKey();
+//        }
+//    }
+//    if (!m_serialKey.isValid()) {
+//        emit InvalidLicense();
+//    }
 }
 
 void
 LicenseManager::skipActivation() const
 {
-    notifyActivation ("skip:unknown");
+//    notifyActivation ("skip:unknown");
 }
 
 QString
@@ -172,18 +172,18 @@ LicenseManager::getEditionName(Edition const edition, bool trial)
 void
 LicenseManager::notifyActivation(QString identity) const
 {
-    ActivationNotifier* notifier = new ActivationNotifier();
-    notifier->setIdentity(identity);
-
-    QThread* thread = new QThread();
-    connect(notifier, SIGNAL(finished()), thread, SLOT(quit()));
-    connect(notifier, SIGNAL(finished()), notifier, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-
-    notifier->moveToThread(thread);
-    thread->start();
-
-    QMetaObject::invokeMethod(notifier, "notify", Qt::QueuedConnection);
+//    ActivationNotifier* notifier = new ActivationNotifier();
+//    notifier->setIdentity(identity);
+//
+//    QThread* thread = new QThread();
+//    connect(notifier, SIGNAL(finished()), thread, SLOT(quit()));
+//    connect(notifier, SIGNAL(finished()), notifier, SLOT(deleteLater()));
+//    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+//
+//    notifier->moveToThread(thread);
+//    thread->start();
+//
+//    QMetaObject::invokeMethod(notifier, "notify", Qt::QueuedConnection);
 }
 
 QString
@@ -206,7 +206,7 @@ LicenseManager::getLicenseNotice() const
 void
 LicenseManager::registerLicense()
 {
-    m_registry.registerLicense();
+//    m_registry.registerLicense();
 }
 
 QString
@@ -260,12 +260,12 @@ LicenseManager::getTemporaryNotice() const
 void
 LicenseManager::validateSerialKey() const
 {
-    if (m_serialKey.isValid()) {
-        if (m_serialKey.isTemporary()){
-           QTimer::singleShot(m_serialKey.getSpanLeft(), this, SLOT(validateSerialKey()));
-        }
-    }
-    else{
-        emit InvalidLicense();
-    }
+//    if (m_serialKey.isValid()) {
+//        if (m_serialKey.isTemporary()){
+//           QTimer::singleShot(m_serialKey.getSpanLeft(), this, SLOT(validateSerialKey()));
+//        }
+//    }
+//    else{
+//        emit InvalidLicense();
+//    }
 }

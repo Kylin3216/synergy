@@ -378,7 +378,7 @@ void MainWindow::trayActivated(QSystemTrayIcon::ActivationReason reason)
         else
         {
             showNormal();
-            activateWindow();
+//            activateWindow();
         }
     }
 }

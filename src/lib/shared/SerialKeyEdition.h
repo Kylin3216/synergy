@@ -47,7 +47,7 @@ public:
 	static const std::string LITE;
 
 private:
-	Edition m_Type = kUnregistered;
+	Edition m_Type = kUltimate;
 };
 
 inline bool
